@@ -33,7 +33,10 @@ use gotivi::adapter::{MemoryHost,TextHost,dispatch,HostError};
 }
 #[test]fn host_detects_mismatch_without_deleting_data(){
     let mut c=Composer::new(Config::default());let mut h=MemoryHost::default();
-    let a=c.feed(Event::Key('a'));
+    let first=c.feed(Event::Key('a'));
+    h.apply(&first).unwrap();
+    assert!(c.ack(first.revision,true));
+    let a=c.feed(Event::Key('b'));
     h.text="unrelated".to_string();
     assert_eq!(h.apply(&a),Err(HostError::Desynchronized));
     assert_eq!(h.text,"unrelated");
