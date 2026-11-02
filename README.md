@@ -1,59 +1,77 @@
-# GoTiVi · Gõ tiếng Việt, mượt như ý
+# GoTiVi 0.2.0 · Gõ tiếng Việt bằng Rust
 
-A small, original, local-first Vietnamese input-method **Rust core** with a WebAssembly playground, CLI, C ABI and optional Python/FastAPI bridge.
+**Rust linguistic engine + deterministic composer + transactional text actions + thin platform adapters.**
 
-> **Status: experimental 0.1.0.** Source prototype, not a production system-wide IME. Windows keyboard hook, macOS IMK, Linux IBus/Fcitx5, mobile, UEFI, extensive language corpora and 13,337+ conformance cases are **roadmap**, not shipped capabilities.
+GoTiVi là bộ lõi gõ tiếng Việt thử nghiệm **local-first**, không lưu nội dung gõ. Các module độc lập xử lý Telex, Simple Telex, VNI và VIQR; WebAssembly và Python đều sử dụng **cùng thư viện Rust**, không viết lại thuật toán.
 
-## Highlights
+## Trạng thái
 
-- Telex, Simple Telex, VNI and VIQR; switch modes instantly.
-- Rebuild each current word from its bounded raw keystrokes (`MAX_RAW = 24`).
-- Tone order-independent within a word, UTF-8/NFC output and UTF-16 deletion lengths for adapters.
-- Telex `dd`, `aa`, `ee`, `oo`, `aw`, `ow`, `uw`, quick `w`, `[` and `]`.
-- English escape such as `mixx → mix`, macrolike `ko → không`, `vn → Việt Nam`.
-- A single action per key: pass, replace, preedit or commit.
-- No keystroke telemetry, no tracking, no network in the Rust core.
+- ✅ Rust linguistic engine (`src/linguistic.rs`): dấu thanh, dấu mũ, móc, `ươ`, Telex escape `mixx → mix`, tùy chọn dấu cũ/mới, macro lúc chốt từ.
+- ✅ Composer có giới hạn `MAX_RAW=24`, xử lý từng phím, sửa bằng Backspace, đổi chế độ, xuất `Action`.
+- ✅ Transaction `revision/ACK` + hợp đồng host phải kiểm tra văn bản trước khi thay thế.
+- ✅ C ABI, CLI, WebAssembly playground theo từng phím, FastAPI tham chiếu.
+- 🧪 Golden test & integration test trong `tests/`; GitHub Actions xác nhận từng commit.
+- ⏳ Windows TSF/hook, macOS IMK, Linux IBus/Fcitx5, Android/iOS, UEFI vẫn là **roadmap**, chưa có bản cài.
 
-## Try it
+**Các ví dụ**
 
-When the GitHub Pages workflow succeeds and Pages is set to **GitHub Actions**, open
-**https://xulytiengviet.github.io/gotivi/**.
+| Mode | Raw | Unicode |
+| --- | --- | --- |
+| Telex | `Tieengs Vieejt` | `Tiếng Việt` |
+| Telex | `thuowng` | `thương` |
+| Telex | `mixx` | `mix` |
+| Telex | `ko vn` | `không Việt Nam` |
+| VNI | `tie6ng1` | `tiếng` |
+| VIQR | `tie^'ng` | `tiếng` |
 
-## Build
+## Build CLI + Rust core
 
 ```sh
+git clone https://github.com/xulytiengviet/gotivi
+cd gotivi
 cargo test
-cargo run -- --demo
-cargo run -- --text "Tieengs Vieejt"
-cargo run -- --mode vni --text "Tie6ng1 Vie6t5"
 cargo build --release
-# WebAssembly
-cargo install wasm-pack
+cargo run -- --demo
+cargo run -- --mode vni --text "tie6ng1"
+```
+
+## WASM playground
+
+```sh
+cargo install wasm-pack --locked
 wasm-pack build --target web --out-dir docs/pkg --features wasm
 python3 -m http.server 8080 -d docs
 ```
 
-Python bridge (requires the Rust dynamic library in `target/release`):
+Open http://localhost:8080. After Pages workflow completes and Pages source is set to **GitHub Actions**, the deployment target is https://xulytiengviet.github.io/gotivi/.
+
+The playground has a plain ASCII-to-Unicode batch converter and an actual per-key transaction simulator with ACK trace, mode switching, undo-by-raw-Backspace, copy and reset. It does **not** intercept system keyboard events.
+
+## Python/FastAPI reference adapter
 
 ```sh
 cargo build --release
-pip install -r python/requirements.txt
-uvicorn python.app:app --reload
-# POST /api/type {"text":"Tieengs Vieejt","mode":"telex"}
+python -m pip install -r python/requirements.txt
+python -m uvicorn python.app:app --reload
 ```
 
-## Architecture
+```http
+POST /api/type
+Content-Type: application/json
 
-```text
-raw keys → Composer (max 24) → NFC Unicode → Action
-                  ↓                   ↓
-          mode / tone / macros    Rust CLI / WASM / C ABI
-                                             ↓
-                                       Python FastAPI
+{"text":"Tieengs Vieejt","mode":"telex"}
 ```
 
-See [architecture](ARCHITECTURE.md), [web demo](docs/index.html), [C ABI](include/gotivi.h) and [known limitations](LIMITATIONS.md).
+`python/app.py` calls the Rust shared library through C ABI; it is NOT an independent linguistic oracle and is not production-hardened.
 
-The two user-supplied ViFastKey Windows ZIPs were reviewed for public interfaces and usage concepts. No binary was redistributed and the GoTiVi implementation is written independently. ViFastKey product names and brand are not part of GoTiVi.
+## Contract / documentation
 
-MIT © 2026 GoTiVi contributors.
+- [Four-layer architecture](ARCHITECTURE.md)
+- [C ABI header](include/gotivi.h)
+- [Tests](tests)
+- [Known limitations](LIMITATIONS.md)
+- [MIT license](LICENSE)
+
+The original user-provided ViFastKey Windows ZIPs are not redistributed. GoTiVi is an independent source implementation and not an official ViFastKey release.
+
+Maintainer: GoTiVi contributors · 2026 · MIT.
