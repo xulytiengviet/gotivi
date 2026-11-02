@@ -1,12 +1,17 @@
 [package]
 name = "gotivi"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
+description = "Local-first Vietnamese linguistic input engine"
+repository = "https://github.com/xulytiengviet/gotivi"
 [lib]
 crate-type = ["rlib", "cdylib"]
 [features]
 default = []
 wasm = ["dep:wasm-bindgen"]
 [dependencies]
+unicode-normalization = "0.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 wasm-bindgen = { version = "0.2", optional = true }
