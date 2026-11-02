@@ -1,1 +1,75 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GoTiVi — bộ gõ tiếng Việt Rust/WebAssembly"><title>GoTiVi — Gõ tiếng Việt, mượt như ý</title><style>:root{font-family:Inter,system-ui,sans-serif;color:#e8f0fa;background:#07111f}*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1050px;margin:auto;padding:24px}nav{display:flex;justify-content:space-between;align-items:center}.logo{font-weight:900;font-size:24px;color:#67e8f9}a{color:#67e8f9}.hero{padding:55px 0 25px}h1{font-size:clamp(38px,7vw,72px);line-height:1.06;margin:12px 0}p{color:#a8bbcf;line-height:1.7}.chip{color:#9cf6c5;font-size:13px}section{margin:26px 0;border:1px solid #23415a;background:#0d1d2f;border-radius:18px;padding:26px}select,textarea,button{font:inherit;border-radius:9px;border:1px solid #34516b;background:#071421;color:white;padding:12px}textarea{width:100%;min-height:142px;resize:vertical}button{background:#1b8c9f;cursor:pointer;border:0}button:hover{background:#116b7c}.fields{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.tile{padding:18px;background:#13263b;border-radius:12px}.result{background:#071421;border:1px solid #2b5470;border-radius:12px;min-height:90px;padding:20px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:24px}.muted{font-size:12px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}kbd{background:#243c54;padding:3px 7px;border-radius:4px}</style></head><body><header><nav><span class="logo">◈ GoTiVi</span><div><a href="https://github.com/xulytiengviet/gotivi">GitHub / Source</a></div></nav><div class="hero"><span class="chip">RUST · WEBASSEMBLY · LOCAL-FIRST</span><h1>Gõ tiếng Việt,<br>mượt như ý.</h1><p>Telex, Simple Telex, VNI và VIQR trên một lõi Rust. Thử trực tiếp với WASM ngay trong trình duyệt, không gửi nội dung gõ lên máy chủ.</p></div></header><main><section id="go-thu"><div class="row"><h2>Gõ thử</h2><small id="status">Đang kiểm tra WASM...</small></div><div class="fields"><label>Kiểu gõ <select id="mode"><option value="telex">Telex</option><option value="simple">Simple Telex</option><option value="vni">VNI</option><option value="viqr">VIQR</option><option value="english">English</option></select></label><button id="example">Ví dụ</button><button id="clear">Xóa</button></div><label for="raw">Chuỗi phím thô</label><textarea id="raw" spellcheck="false" placeholder="Ví dụ: Tieengs Vieejt">Tieengs Vieejt</textarea><div class="row"><h3>Đầu ra Unicode</h3><button id="copy">Sao chép</button></div><div class="result" id="result" aria-live="polite"></div><p class="muted">Bản thử nghiệm chuyển đổi từng chuỗi. Không can thiệp trường nhập của ứng dụng khác; các quy tắc nâng cao còn đang được hoàn thiện.</p></section><div class="grid"><div class="tile"><h3>4 kiểu gõ</h3><p>Telex · Simple Telex · VNI · VIQR. Đổi kiểu ngay.</p></div><div class="tile"><h3>WASM tại máy</h3><p>Không tải nội dung nhập lên server. Rust chạy trong trình duyệt.</p></div><div class="tile"><h3>Rust Core</h3><p>C ABI cho desktop adapter; CLI và Python API mẫu.</p></div><div class="tile"><h3>Golden tests</h3><p>Bộ mẫu kiểm thử nguồn mở. Chưa đạt mục tiêu 13.337 + 3.000 ca.</p></div></div><section><h2>Ví dụ nhanh</h2><p><kbd>Tieengs Vieejt</kbd> → Tiếng Việt · <kbd>thuowng</kbd> → thương · <kbd>dd</kbd> → đ</p><h2>Cài đặt và xây dựng</h2><p>Clone repository, chạy <kbd>cargo test</kbd>, <kbd>cargo run -- --demo</kbd> và <kbd>wasm-pack build --target web --out-dir docs/pkg --features wasm</kbd>.</p><a href="https://github.com/xulytiengviet/gotivi">Xem README và mã nguồn</a></section></main><footer><p>GoTiVi 0.1.0 · Dự án thử nghiệm · MIT © 2026 · Không liên kết ViFastKey</p></footer><script type="module">const status=document.querySelector('#status'),raw=document.querySelector('#raw'),result=document.querySelector('#result'),mode=document.querySelector('#mode');let type=null;try{const wasm=await import('./pkg/gotivi.js');await wasm.default();type=wasm.type_text;status.textContent='● WASM đã sẵn sàng';status.style.color='#9cf6c5'}catch(e){status.textContent='WASM chưa được build — xem hướng dẫn';status.style.color='#ffcb8a'}function render(){result.textContent=type?type(raw.value,mode.value):'Chưa có WASM. GitHub Actions cần build và phát hành trước.'}raw.addEventListener('input',render);mode.addEventListener('change',render);document.querySelector('#example').onclick=()=>{raw.value=mode.value==='vni'?'Tie6ng1 Vie6t5':'Tieengs Vieejt';render()};document.querySelector('#clear').onclick=()=>{raw.value='';render();raw.focus()};document.querySelector('#copy').onclick=async()=>{await navigator.clipboard.writeText(result.textContent)};render()</script></body></html>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GoTiVi — bộ gõ tiếng Việt Rust/WebAssembly"><title>GoTiVi — Gõ tiếng Việt, mượt như ý</title><style>:root{font-family:Inter,system-ui,sans-serif;color:#e8f0fa;background:#07111f}*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1050px;margin:auto;padding:24px}nav{display:flex;justify-content:space-between;align-items:center}.logo{font-weight:900;font-size:24px;color:#67e8f9}a{color:#67e8f9}.hero{padding:55px 0 25px}h1{font-size:clamp(38px,7vw,72px);line-height:1.06;margin:12px 0}p{color:#a8bbcf;line-height:1.7}.chip{color:#9cf6c5;font-size:13px}section{margin:26px 0;border:1px solid #23415a;background:#0d1d2f;border-radius:18px;padding:26px}select,textarea,button{font:inherit;border-radius:9px;border:1px solid #34516b;background:#071421;color:white;padding:12px}textarea{width:100%;min-height:142px;resize:vertical}button{background:#1b8c9f;cursor:pointer;border:0}button:hover{background:#116b7c}.fields{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.tile{padding:18px;background:#13263b;border-radius:12px}.result{background:#071421;border:1px solid #2b5470;border-radius:12px;min-height:90px;padding:20px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:24px}.muted{font-size:12px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}kbd{background:#243c54;padding:3px 7px;border-radius:4px}.events{max-height:230px;overflow:auto;font:12px ui-monospace,monospace;color:#9cc8dd;padding:12px;line-height:1.55;background:#06111e;border-radius:9px;white-space:pre-wrap}.capture{min-height:58px}.hint{padding:9px 0;color:#9ab1ca}.status-ok{color:#9cf6c5}</style></head><body><header><nav><span class="logo">◈ GoTiVi</span><div><a href="https://github.com/xulytiengviet/gotivi">GitHub / Source</a></div></nav><div class="hero"><span class="chip">RUST · WEBASSEMBLY · LOCAL-FIRST</span><h1>Gõ tiếng Việt,<br>mượt như ý.</h1><p>Telex, Simple Telex, VNI và VIQR trên một lõi Rust. Thử trực tiếp với WASM ngay trong trình duyệt, không gửi nội dung gõ lên máy chủ.</p></div></header><main><section id="go-thu"><div class="row"><h2>Gõ thử</h2><small id="status">Đang kiểm tra WASM...</small></div><div class="fields"><label>Kiểu gõ <select id="mode"><option value="telex">Telex</option><option value="simple">Simple Telex</option><option value="vni">VNI</option><option value="viqr">VIQR</option><option value="english">English</option></select></label><button id="example">Ví dụ</button><button id="clear">Xóa</button></div><label for="raw">Chuỗi phím thô</label><textarea id="raw" spellcheck="false" placeholder="Ví dụ: Tieengs Vieejt">Tieengs Vieejt</textarea><div class="row"><h3>Đầu ra Unicode</h3><button id="copy">Sao chép</button></div><div class="result" id="result" aria-live="polite"></div><p class="muted">Bản thử nghiệm chuyển đổi từng chuỗi. Không can thiệp trường nhập của ứng dụng khác; các quy tắc nâng cao còn đang được hoàn thiện.</p></section><section id="giao-dich"><div class="row"><h2>Composer theo từng phím · Transactional WASM</h2><span class="chip">REVISION / ACK</span></div><p>Nhập các phím ASCII vào ô dưới đây. Engine Rust sinh một Action, bộ mô phỏng kiểm tra văn bản mong đợi rồi xác nhận ACK. Phù hợp kiểm tra Backspace, dấu, ranh giới từ và macro.</p><label for="capture">Bắt phím thử nghiệm</label><textarea id="capture" class="capture" spellcheck="false" autocomplete="off" placeholder="Nhấp vào đây rồi gõ Tieengs Vieejt"></textarea><div class="row"><h3>Văn bản host sau khi áp Action</h3><div><button id="tx-example">Chạy ví dụ</button> <button id="tx-reset">Làm lại</button> <button id="tx-copy">Copy</button></div></div><div id="host-view" class="result" aria-live="polite"></div><p class="muted" id="tx-state">Revision 0 · Bộ đệm trống</p><h3>Nhật ký giao dịch (chỉ trong phiên trang)</h3><div id="tx-events" class="events">Chưa có sự kiện.</div><p class="muted">Adapter bộ nhớ trong trang là minh họa giao dịch; chưa phải keyboard hook của hệ điều hành. Không thu thập hay lưu nội dung gõ.</p></section><div class="grid"><div class="tile"><h3>4 kiểu gõ</h3><p>Telex · Simple Telex · VNI · VIQR. Đổi kiểu ngay.</p></div><div class="tile"><h3>WASM tại máy</h3><p>Không tải nội dung nhập lên server. Rust chạy trong trình duyệt.</p></div><div class="tile"><h3>Rust Core</h3><p>C ABI cho desktop adapter; CLI và Python API mẫu.</p></div><div class="tile"><h3>Golden tests</h3><p>Bộ mẫu kiểm thử nguồn mở. Chưa đạt mục tiêu 13.337 + 3.000 ca.</p></div></div><section><h2>Ví dụ nhanh</h2><p><kbd>Tieengs Vieejt</kbd> → Tiếng Việt · <kbd>thuowng</kbd> → thương · <kbd>dd</kbd> → đ</p><h2>Cài đặt và xây dựng</h2><p>Clone repository, chạy <kbd>cargo test</kbd>, <kbd>cargo run -- --demo</kbd> và <kbd>wasm-pack build --target web --out-dir docs/pkg --features wasm</kbd>.</p><a href="https://github.com/xulytiengviet/gotivi">Xem README và mã nguồn</a></section></main><footer><p>GoTiVi 0.2.0 · Dự án thử nghiệm · MIT © 2026 · Không liên kết ViFastKey</p></footer><script type="module">
+const el=(id)=>document.getElementById(id);
+const raw=el('raw'),result=el('result'),mode=el('mode'),capture=el('capture');
+const host=el('host-view'),events=el('tx-events'),state=el('tx-state');
+let typeText=null,session=null,visible='',trace=[];
+try{
+  const w=await import('./pkg/gotivi.js');
+  await w.default();
+  typeText=w.type_text;
+  session=new w.WasmComposer(mode.value);
+  el('status').textContent='● WASM Rust hoạt động offline';
+  el('status').className='status-ok';
+}catch(e){
+  el('status').textContent='WASM chưa sẵn sàng. Hãy build từ source.';
+  capture.disabled=true;el('tx-example').disabled=true;
+}
+function renderBatch(){
+  if(typeText){
+    const ascii=raw.value.replace(/[^\x00-\x7f]/g,'');
+    if(raw.value!==ascii)raw.value=ascii;
+    result.textContent=typeText(ascii,mode.value);
+  }else{result.textContent='Không tải được module WASM: kiểm tra GitHub Actions hoặc build tại máy.'}
+}
+function log(key,a){
+  trace.unshift(JSON.stringify({key,kind:a.kind,rev:a.revision,delete_utf16:a.delete_utf16,expected:a.expected,insert:a.insert,ack:!a.pass_key}));
+  trace=trace.slice(0,16);events.textContent=trace.join('\n');
+  state.textContent='Revision '+a.revision+' · '+a.kind+' · '+(a.pass_key?'host tự xử lý':'đã xác nhận');
+}
+function deleteGrapheme(s){
+  if(!s)return s;
+  if(Intl.Segmenter){const units=[...new Intl.Segmenter('vi',{granularity:'grapheme'}).segment(s)];return units.slice(0,-1).map(x=>x.segment).join('');}
+  return Array.from(s).slice(0,-1).join('');
+}
+function consume(key,a){
+  if(['replace','preedit','commit'].includes(a.kind)){
+    const expected=a.expected||'';
+    if(!visible.endsWith(expected)){session.ack(a.revision,false);state.textContent='LỖI: host mismatch, đã reset để an toàn';session.reset();return}
+    visible=visible.slice(0,visible.length-expected.length)+(a.insert||'');
+    session.ack(a.revision,true);
+  }else if(a.kind==='pass'&&a.pass_key){
+    if(key==='Backspace')visible=deleteGrapheme(visible);
+    else if(key==='Enter')visible+='\n';
+    else if(key==='Tab')visible+='\t';
+    else if(key.length===1)visible+=key;
+  }
+  host.textContent=visible;log(key,a);
+}
+function keypress(key){if(!session)return;const a=JSON.parse(session.feed(key));consume(key,a)}
+capture.addEventListener('keydown',e=>{
+  if(!session||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==='Backspace'||e.key==='Enter'||e.key==='Tab'||(e.key.length===1&&e.key.charCodeAt(0)<128)){
+    e.preventDefault();keypress(e.key);
+  }
+});
+function reset(){
+  if(session)session=new window.GoTiViWasmComposer(mode.value);
+  visible='';trace=[];events.textContent='Chưa có sự kiện.';host.textContent='';
+  state.textContent='Revision 0 · Bộ đệm trống';capture.value='';
+}
+if(session)window.GoTiViWasmComposer=session.constructor;
+mode.addEventListener('change',()=>{
+  renderBatch();
+  if(session){consume('switch_mode',JSON.parse(session.switch_mode(mode.value)))}
+});
+raw.addEventListener('input',renderBatch);
+el('example').onclick=()=>{raw.value=mode.value==='vni'?'tie6ng1 vie6t5':'Tieengs Vieejt';renderBatch()};
+el('clear').onclick=()=>{raw.value='';renderBatch();raw.focus()};
+el('copy').onclick=async()=>{await navigator.clipboard.writeText(result.textContent)};
+el('tx-example').onclick=()=>{
+  reset();for(const ch of (mode.value==='vni'?'tie6ng1 vie6t5':'Tieengs Vieejt'))keypress(ch);
+};
+el('tx-reset').onclick=()=>{reset();capture.focus()};
+el('tx-copy').onclick=async()=>{await navigator.clipboard.writeText(visible)};
+renderBatch();
+</script></body></html>
