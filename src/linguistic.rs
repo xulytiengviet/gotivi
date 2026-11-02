@@ -21,7 +21,7 @@ if ps.len()>1&&v.len()>2&&v[0].eq_ignore_ascii_case(&'q')&&v[1].eq_ignore_ascii_
 if ps.is_empty(){return}let last=*ps.last().unwrap();let mut pick=last;
 if let Some(&i)=ps.iter().find(|&&i|matches!(vowel(v[i]),Some((4|7|8,_)))){pick=i}
 else if ps.len()>1{let first=ps[0];let a=vowel(v[first]).unwrap().0;let b=vowel(v[last]).unwrap().0;let coda=last+1<v.len();
-if !coda&&matches!((a,b),(6,0)|(6,3)|(9,11)){pick=if style==ToneStyle::Traditional{first}else{last}}
+if !coda&&matches!((a,b),(6,0)|(6,3)|(9,11)){pick=if style==ToneStyle::Modern{first}else{last}}
 else{pick=if coda{last}else{first}}}
 let(row,_)=vowel(v[pick]).unwrap();v[pick]=make(v[pick],row,t);}
 fn case_like(raw:&str,replace:&str)->String{if raw.chars().all(|c|c.is_uppercase()){replace.to_uppercase()}else if raw.chars().next().is_some_and(|c|c.is_uppercase()){let mut it=replace.chars();format!("{}{}",it.next().unwrap().to_uppercase(),it.collect::<String>())}else{replace.into()}}
